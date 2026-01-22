@@ -27,7 +27,7 @@ class TranslateEntriesJobTest extends TestCase
         $entry = $entry->collection($collection);
         $entry = $entry->data(['title' => 'foo']);
 
-        $entry->save();
+        $entry->saveQuietly();
 
         /** @var SupportCollection<int, StatamicSite> $sites */
         $sites = Site::all();

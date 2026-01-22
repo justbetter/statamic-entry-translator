@@ -27,7 +27,7 @@ class TranslateEntriesActionTest extends TestCase
 
         $entry = $entry->collection($collection);
         $entry = $entry->data(['title' => 'foo']);
-        $entry->save();
+        $entry->saveQuietly();
 
         $entries = collect([$entry]);
         $action->run($entries, [
@@ -53,7 +53,7 @@ class TranslateEntriesActionTest extends TestCase
 
         $entry = $entry->collection($collection);
         $entry = $entry->data(['title' => 'foo']);
-        $entry->save();
+        $entry->saveQuietly();
 
         $entries = collect([$entry]);
         $action->run($entries, [
