@@ -1,5 +1,5 @@
 {
-    "name": "just-better/statamic-entry-translator",
+    "name": "justbetter/statamic-entry-translator",
     "description": "Automaticly translate the content of entries.",
     "require": {
         "statamic/cms": "^5.70",
