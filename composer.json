@@ -2,10 +2,9 @@
     "name": "just-better/statamic-entry-translator",
     "description": "Automaticly translate the content of entries.",
     "require": {
-        "statamic/cms": "^5.0",
+        "statamic/cms": "^5.70",
         "php": "^8.4",
         "laravel/framework": "^12.0",
-        "statamic/eloquent-driver": "^4.35",
         "deeplcom/deepl-php": "^1.16"
     },
     "require-dev": {

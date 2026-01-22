@@ -18,10 +18,13 @@ use Statamic\Sites\Site as StatamicSite;
 
 class TranslateEntryTest extends TestCase
 {
-    protected function setUpData(): Entry
+    protected function getEnvironmentSetUp($app): void
     {
-        $collection = Collection::make('pages');
-        $collection->save();
+        Site::setSites([
+            'en' => ['name' => 'English', 'locale' => 'en', 'url' => 'http://localhost/', 'default' => true],
+            'nl' => ['name' => 'Dutch', 'locale' => 'nl', 'url' => 'http://localhost/nl', 'default' => false],
+            'pt' => ['name' => 'Dutch', 'locale' => 'pt', 'url' => 'http://localhost/nl', 'default' => false],
+        ]);
 
         Fieldset::make('seo')
             ->setContents([
@@ -61,13 +64,21 @@ class TranslateEntryTest extends TestCase
                             [
                                 'field' => [
                                     'import' => 'seo',
-                                ]
+                                ],
                             ],
                         ],
                     ],
                 ],
             ])
             ->save();
+
+        parent::getEnvironmentSetUp($app);
+    }
+
+    protected function setUpData(): Entry
+    {
+        $collection = Collection::make('pages');
+        $collection->save();
 
         /** @var Entry $entry */
         $entry = EntryFacade::make();
