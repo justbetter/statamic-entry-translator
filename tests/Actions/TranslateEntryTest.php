@@ -85,7 +85,7 @@ class TranslateEntryTest extends TestCase
 
         $entry = $entry->collection($collection);
         $entry = $entry->data(['title' => 'foo']);
-        $entry->save();
+        $entry->saveQuietly();
 
         return $entry;
     }
