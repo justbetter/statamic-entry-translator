@@ -53,6 +53,14 @@ class TestCase extends AddonTestCase
             ])
             ->save();
 
+        $app['config']->set('app.key', 'base64:7tG0yY7g3QkFrQ+Vk4EBSbcT8D9C4/5Dph1dNRjh6WU=');
+        $app['config']->set('database.default', 'testbench');
+        $app['config']->set('database.connections.testbench', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
+
         parent::getEnvironmentSetUp($app);
     }
 }
