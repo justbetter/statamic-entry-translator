@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use JustBetter\EntryTranslator\ServiceProvider;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\Site;
+use Statamic\Providers\StatamicServiceProvider;
 use Statamic\Testing\AddonTestCase;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 
@@ -62,5 +63,13 @@ class TestCase extends AddonTestCase
         ]);
 
         parent::getEnvironmentSetUp($app);
+    }
+
+    protected function getPackageProviders($app)
+    {
+        return [
+            ...parent::getPackageProviders($app),
+            StatamicServiceProvider::class,
+        ];
     }
 }
