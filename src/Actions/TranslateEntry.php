@@ -34,7 +34,7 @@ class TranslateEntry implements TranslatesEntry
 
         $entry->data(array_replace_recursive($original, $data));
 
-        $entry->save();
+        $entry->saveQuietly();
     }
 
     public static function bind(): void
