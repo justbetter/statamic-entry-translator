@@ -2,7 +2,7 @@
 
 namespace JustBetter\EntryTranslator\Tests;
 
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use JustBetter\EntryTranslator\ServiceProvider;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\Site;
@@ -11,7 +11,7 @@ use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 
 class TestCase extends AddonTestCase
 {
-    use LazilyRefreshDatabase, PreventsSavingStacheItemsToDisk;
+    use PreventsSavingStacheItemsToDisk, RefreshDatabase;
 
     protected string $addonServiceProvider = ServiceProvider::class;
 
