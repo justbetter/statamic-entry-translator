@@ -59,7 +59,9 @@ class TranslateEntryTest extends TestCase
                                 ],
                             ],
                             [
-                                'import' => 'seo',
+                                'field' => [
+                                    'import' => 'seo',
+                                ]
                             ],
                         ],
                     ],
