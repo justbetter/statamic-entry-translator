@@ -38,6 +38,8 @@ class DeeplTranslator extends BaseTranslator
 
     protected function mapLanguageForDeepL(string $language): string
     {
+        // This mapping is based on the payload deepl expects. Other language
+        // codes are accepted as they're used by Statamic.
         return match ($language) {
             'en' => 'en-US',
             'pt' => 'pt-PT',

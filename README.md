@@ -1,5 +1,5 @@
-<a href="https://github.com/justbetter/statamic-entry-translator" title="JustBetter">
-    <img src="./art/banner.svg" alt="Banner">
+<a href="https://justbetter.nl" title="JustBetter">
+    <img src="./art/header.png" alt="JustBetter logo">
 </a>
 
 # Statamic Entry Translator
