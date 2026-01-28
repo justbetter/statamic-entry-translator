@@ -8,7 +8,7 @@
     <a href="https://github.com/justbetter/statamic-entry-translator"><img src="https://img.shields.io/github/actions/workflow/status/justbetter/statamic-entry-translator/tests.yml?label=tests&style=flat-square" alt="Tests"></a>
     <a href="https://github.com/justbetter/statamic-entry-translator"><img src="https://img.shields.io/github/actions/workflow/status/justbetter/statamic-entry-translator/coverage.yml?label=coverage&style=flat-square" alt="Coverage"></a>
     <a href="https://github.com/justbetter/statamic-entry-translator"><img src="https://img.shields.io/github/actions/workflow/status/justbetter/statamic-entry-translator/analyse.yml?label=analysis&style=flat-square" alt="Analysis"></a>
-    <a href="https://github.com/justbetter/statamic-entry-translator"><img src="https://img.shields.io/packagist/dt/just-better/statamic-entry-translator?color=blue&style=flat-square" alt="Total downloads"></a>
+    <a href="https://github.com/justbetter/statamic-entry-translator"><img src="https://img.shields.io/packagist/dt/justbetter/statamic-entry-translator?color=blue&style=flat-square" alt="Total downloads"></a>
 </p>
 
 Automatically translate the content of Statamic entries using translation services.
