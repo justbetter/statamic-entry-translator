@@ -118,14 +118,14 @@ The translations will be queued and processed asynchronously.
 You can also translate entries programmatically:
 
 ```php
-use JustBetter\EntryTranslator\Contracts\TranslatesEntry;
+use JustBetter\EntryTranslator\Facades\TranslateEntry;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 
 $entry = Entry::find('entry-id');
-$targetSite = Site::get('en'); // Target site handle
+$targetSite = Site::get('en');
 
-app(TranslatesEntry::class)->translate($entry, $targetSite);
+TranslateEntry::translate($entry, $targetSite);
 ```
 
 ### Translating Multiple Entries
@@ -133,14 +133,14 @@ app(TranslatesEntry::class)->translate($entry, $targetSite);
 To translate an entry to multiple sites:
 
 ```php
-use JustBetter\EntryTranslator\Contracts\TranslatesEntries;
+use JustBetter\EntryTranslator\Facades\TranslateEntries;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 
 $entry = Entry::find('entry-id');
 $sites = Site::all()->filter(fn($site) => $site->handle() !== $entry->site()->handle());
 
-app(TranslatesEntries::class)->translateEntries($entry, $sites);
+TranslateEntries::translateEntries($entry, $sites);
 ```
 
 ### Using Jobs Directly
