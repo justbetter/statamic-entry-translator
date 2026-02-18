@@ -27,7 +27,11 @@ class DeeplTranslator extends BaseTranslator
             ->map(fn ($text) => $text ?? '')
             ->all();
 
-        $results = $deeplClient->translateText($texts, $source->locale(), $this->mapLanguageForDeepL((string) $site->shortLocale()));
+        $results = $deeplClient->translateText(
+            $texts,
+            $this->mapLanguageForDeepL((string) $source->site()->shortLocale()),
+            $this->mapLanguageForDeepL((string) $site->shortLocale())
+        );
 
         $translatedTexts = collect($results)
             ->map(fn ($result) => $result->text)
