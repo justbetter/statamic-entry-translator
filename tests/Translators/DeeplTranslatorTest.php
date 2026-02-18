@@ -39,7 +39,7 @@ class DeeplTranslatorTest extends TestCase
                 ->once()
                 ->with(
                     ['foo'],
-                    'en',
+                    'en-US',
                     'en-US'
                 )->andReturn([(object) ['text' => 'bar']]);
         });
