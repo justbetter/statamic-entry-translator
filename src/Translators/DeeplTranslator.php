@@ -23,7 +23,9 @@ class DeeplTranslator extends BaseTranslator
         });
 
         $keys = $dotted->keys()->values();
-        $texts = $dotted->values()->all();
+        $texts = $dotted->values()
+            ->map(fn($text) => $text ?? '')
+            ->all();
 
         $results = $deeplClient->translateText($texts, $source->locale(), $this->mapLanguageForDeepL((string) $site->shortLocale()));
 
