@@ -1,5 +1,7 @@
 <?php
 
+use JustBetter\EntryTranslator\Translators\DeeplTranslator;
+
 return [
     'queue' => 'default',
 
@@ -7,7 +9,7 @@ return [
 
     'services' => [
         'deepl' => [
-            'translator' => JustBetter\EntryTranslator\Translators\DeeplTranslator::class,
+            'translator' => DeeplTranslator::class,
 
             'auth_key' => env('DEEPL_AUTH_KEY'),
 
