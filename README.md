@@ -11,22 +11,22 @@
     <a href="https://github.com/justbetter/statamic-entry-translator"><img src="https://img.shields.io/packagist/dt/justbetter/statamic-entry-translator?color=blue&style=flat-square" alt="Total downloads"></a>
 </p>
 
-Automatically translate the content of Statamic entries using translation services.
+Automatically translate the content of Statamic entries and global sets using translation services.
 
 ## Features
 
-This package provides a seamless way to translate Statamic entries to different sites and locales using translation services.
+This package provides a seamless way to translate Statamic entries and global sets to different sites and locales using translation services.
 
 Features:
 
-- Translate entries to multiple sites/locales
+- Translate entries and global sets to multiple sites/locales
 - Support for DeepL translation service
 - Queue-based translation processing
 - Configurable field exclusions
 - Handles nested fields, replicators, and fieldset imports
-- Statamic CP action for easy translation
+- Statamic CP actions for easy entry and global set translation
 - Only translates localizable fields
-- Automatically creates localizations if they don't exist
+- Automatically creates entry localizations if they don't exist
 
 > Also check out our other [Statamic packages](https://github.com/justbetter?q=statamic)!
 
@@ -104,11 +104,22 @@ return [
 
 ### Using the Statamic CP Action
 
+#### Entries
+
 1. Navigate to your entries in the Statamic Control Panel
 2. Select one or more entries you want to translate
 3. Click on the "Actions" dropdown
 4. Select "Translate Content"
 5. Choose the target sites you want to translate to
+6. Click "Run"
+
+#### Global Sets
+
+1. Navigate to your global sets in the Statamic Control Panel
+2. Select a global set you want to translate
+3. Click on the "Actions" dropdown
+4. Select "Translate Content"
+5. Choose the target sites you want to translate to, or select "All sites"
 6. Click "Run"
 
 The translations will be queued and processed asynchronously.
@@ -143,22 +154,62 @@ $sites = Site::all()->filter(fn($site) => $site->handle() !== $entry->site()->ha
 TranslateEntries::translateEntries($entry, $sites);
 ```
 
+### Translating Global Sets
+
+To translate a global set to a single site:
+
+```php
+use JustBetter\EntryTranslator\Facades\TranslateGlobalSet;
+use Statamic\Facades\GlobalSet;
+use Statamic\Facades\Site;
+
+$globalSet = GlobalSet::find('settings');
+$sourceSite = Site::get('en');
+$targetSite = Site::get('nl');
+
+TranslateGlobalSet::translate($globalSet, $sourceSite, $targetSite);
+```
+
+To translate a global set to multiple sites:
+
+```php
+use JustBetter\EntryTranslator\Facades\TranslateGlobalSets;
+use Statamic\Facades\GlobalSet;
+use Statamic\Facades\Site;
+
+$globalSet = GlobalSet::find('settings');
+$sourceSite = Site::get('en');
+$targetSites = Site::all()->filter(fn ($site) => $site->handle() !== $sourceSite->handle());
+
+TranslateGlobalSets::translateGlobalSets($globalSet, $sourceSite, $targetSites);
+```
+
 ### Using Jobs Directly
 
 You can dispatch translation jobs directly:
 
 ```php
 use JustBetter\EntryTranslator\Jobs\TranslateEntryJob;
+use JustBetter\EntryTranslator\Jobs\TranslateGlobalSetJob;
 use Statamic\Facades\Entry;
+use Statamic\Facades\GlobalSet;
 use Statamic\Facades\Site;
 
 $entry = Entry::find('entry-id');
 $targetSite = Site::get('en');
 
 TranslateEntryJob::dispatch($entry, $targetSite);
+
+$globalSet = GlobalSet::find('settings');
+$sourceSite = Site::get('en');
+$targetSite = Site::get('nl');
+
+TranslateGlobalSetJob::dispatch($globalSet, $sourceSite, $targetSite);
 ```
 
 ## How It Works
+
+### Entries
 
 1. The package identifies all localizable fields in the entry's blueprint
 2. Fields that are excluded (by handle or type) are filtered out
@@ -168,7 +219,17 @@ TranslateEntryJob::dispatch($entry, $targetSite);
 6. The translated content is merged with the original entry data
 7. The localized entry is saved
 
+### Global Sets
+
+1. The package loads the global set variables for the source and target sites
+2. The package identifies all localizable fields in the global set blueprint
+3. Fields that are excluded (by handle or type) are filtered out
+4. The source global variables are translated by the configured translation service
+5. The translated content is merged with the original source data
+6. The target site's global variables are saved quietly
+
 The package handles:
+
 - Nested fields (fields within fields)
 - Replicator fields
 - Fieldset imports
@@ -186,11 +247,12 @@ namespace App\Translators;
 use JustBetter\EntryTranslator\Translators\BaseTranslator;
 use Illuminate\Support\Collection;
 use Statamic\Entries\Entry;
+use Statamic\Globals\Variables;
 use Statamic\Sites\Site;
 
 class MyCustomTranslator extends BaseTranslator
 {
-    public function translate(Entry $source, Collection $localisableFields, Site $site): array
+    public function translate(Entry|Variables $source, Collection $localisableFields, Site $site): array
     {
         // Your translation logic here
         // Return an array of translated data

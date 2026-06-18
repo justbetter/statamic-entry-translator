@@ -2,6 +2,7 @@
 
 namespace JustBetter\EntryTranslator\Tests\Actions;
 
+use DeepL\DeepLClient;
 use Illuminate\Support\Collection as SupportCollection;
 use JustBetter\EntryTranslator\Actions\TranslateEntry;
 use JustBetter\EntryTranslator\Contracts\ResolvesTranslator;
@@ -108,5 +109,29 @@ class TranslateEntryTest extends TestCase
         });
 
         $action->translate($entry, $site);
+    }
+
+    #[Test]
+    public function it_creates_a_localization_when_the_target_entry_does_not_exist(): void
+    {
+        config()->set('justbetter.statamic-entry-translator.service', 'deepl');
+        config()->set('justbetter.statamic-entry-translator.services.deepl.auth_key', '::auth-key::');
+
+        $this->mock(DeepLClient::class, function (MockInterface $mock): void {
+            $mock->shouldReceive('translateText')
+                ->once()
+                ->with(['foo'], 'en-US', 'nl')
+                ->andReturn([(object) ['text' => 'bar']]);
+        });
+
+        $entry = $this->setupData();
+        /** @var StatamicSite $site */
+        $site = Site::get('nl');
+
+        app(TranslateEntry::class)->translate($entry, $site);
+
+        $localized = $entry->in('nl');
+        $this->assertInstanceOf(Entry::class, $localized);
+        $this->assertSame('bar', $localized->get('title'));
     }
 }

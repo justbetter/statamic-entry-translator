@@ -6,6 +6,8 @@ use JustBetter\EntryTranslator\Actions\Fields\CollectLocalisableFields;
 use JustBetter\EntryTranslator\Actions\ResolveTranslator;
 use JustBetter\EntryTranslator\Actions\TranslateEntries;
 use JustBetter\EntryTranslator\Actions\TranslateEntry;
+use JustBetter\EntryTranslator\Actions\TranslateGlobalSet;
+use JustBetter\EntryTranslator\Actions\TranslateGlobalSets;
 use JustBetter\EntryTranslator\Translators\DeeplTranslator;
 use Statamic\Providers\AddonServiceProvider;
 
@@ -35,6 +37,8 @@ class ServiceProvider extends AddonServiceProvider
     {
         TranslateEntries::bind();
         TranslateEntry::bind();
+        TranslateGlobalSets::bind();
+        TranslateGlobalSet::bind();
 
         CollectLocalisableFields::bind();
 
