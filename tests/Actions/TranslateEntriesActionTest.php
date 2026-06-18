@@ -137,4 +137,41 @@ class TranslateEntriesActionTest extends TestCase
 
         $this->assertSame(__('Translate Content'), $title);
     }
+
+    #[Test]
+    public function it_is_visible_to_entries(): void
+    {
+        $this->assertTrue(app(TranslateEntriesAction::class)->visibleTo($this->setUpData()));
+        $this->assertFalse(app(TranslateEntriesAction::class)->visibleTo(new \stdClass));
+    }
+
+    #[Test]
+    public function it_authorizes_users_that_can_edit_the_item(): void
+    {
+        $entry = $this->setUpData();
+        $user = new class
+        {
+            public function can(string $ability, mixed $item): bool
+            {
+                return $ability === 'edit' && $item instanceof Entry;
+            }
+        };
+
+        $this->assertTrue(app(TranslateEntriesAction::class)->authorize($user, $entry));
+    }
+
+    protected function setUpData(): Entry
+    {
+        $collection = Collection::make('pages');
+        $collection->save();
+
+        /** @var Entry $entry */
+        $entry = EntryFacade::make();
+
+        $entry = $entry->collection($collection);
+        $entry = $entry->data(['title' => 'foo']);
+        $entry->saveQuietly();
+
+        return $entry;
+    }
 }

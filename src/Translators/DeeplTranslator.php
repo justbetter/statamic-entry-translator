@@ -6,11 +6,12 @@ use DeepL\DeepLClient;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Statamic\Entries\Entry;
+use Statamic\Globals\Variables;
 use Statamic\Sites\Site;
 
 class DeeplTranslator extends BaseTranslator
 {
-    public function translate(Entry $source, Collection $localisableFields, Site $site): array
+    public function translate(Entry|Variables $source, Collection $localisableFields, Site $site): array
     {
         $deeplClient = app(DeepLClient::class);
         $data = $source->values();
