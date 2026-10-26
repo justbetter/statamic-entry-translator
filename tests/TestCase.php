@@ -6,7 +6,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use JustBetter\EntryTranslator\ServiceProvider;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\Site;
+use Statamic\Facades\Taxonomy as TaxonomyFacade;
+use Statamic\Facades\Term as TermFacade;
 use Statamic\Providers\StatamicServiceProvider;
+use Statamic\Taxonomies\LocalizedTerm;
+use Statamic\Taxonomies\Taxonomy;
+use Statamic\Taxonomies\Term;
 use Statamic\Testing\AddonTestCase;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 
@@ -71,5 +76,28 @@ class TestCase extends AddonTestCase
             ...parent::getPackageProviders($app),
             StatamicServiceProvider::class,
         ];
+    }
+
+    /**
+     * @param  array<int, string>  $sites
+     * @param  array<string, mixed>  $data
+     */
+    protected function makeTerm(array $sites = ['en', 'nl', 'pt'], array $data = []): LocalizedTerm
+    {
+        // Taxonomies only respect their configured sites when multisite is enabled.
+        config()->set('statamic.system.multisite', true);
+
+        /** @var Taxonomy $taxonomy */
+        $taxonomy = TaxonomyFacade::make('tags');
+        $taxonomy->sites($sites)->saveQuietly();
+
+        /** @var Term $term */
+        $term = TermFacade::make('hello');
+        $term->taxonomy('tags')->dataForLocale('en', $data);
+
+        /** @var LocalizedTerm $localizedTerm */
+        $localizedTerm = $term->in('en');
+
+        return $localizedTerm;
     }
 }
