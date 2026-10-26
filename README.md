@@ -11,20 +11,20 @@
     <a href="https://github.com/justbetter/statamic-entry-translator"><img src="https://img.shields.io/packagist/dt/justbetter/statamic-entry-translator?color=blue&style=flat-square" alt="Total downloads"></a>
 </p>
 
-Automatically translate the content of Statamic entries and global sets using translation services.
+Automatically translate the content of Statamic entries, global sets and taxonomy terms using translation services.
 
 ## Features
 
-This package provides a seamless way to translate Statamic entries and global sets to different sites and locales using translation services.
+This package provides a seamless way to translate Statamic entries, global sets and taxonomy terms to different sites and locales using translation services.
 
 Features:
 
-- Translate entries and global sets to multiple sites/locales
+- Translate entries, global sets and taxonomy terms to multiple sites/locales
 - Support for DeepL translation service
 - Queue-based translation processing
 - Configurable field exclusions
 - Handles nested fields, replicators, and fieldset imports
-- Statamic CP actions for easy entry and global set translation
+- Statamic CP actions for easy entry, global set and taxonomy term translation
 - Only translates localizable fields
 - Automatically creates entry localizations if they don't exist
 
@@ -122,6 +122,15 @@ return [
 5. Choose the target sites you want to translate to, or select "All sites"
 6. Click "Run"
 
+#### Taxonomy Terms
+
+1. Navigate to a taxonomy in the Statamic Control Panel and select the site to translate from
+2. Select one or more terms you want to translate, or open a single term
+3. Click on the "Actions" dropdown
+4. Select "Translate Content"
+5. Choose the target sites you want to translate to, or select "All sites"
+6. Click "Run"
+
 The translations will be queued and processed asynchronously.
 
 ### Programmatic Usage
@@ -184,6 +193,34 @@ $targetSites = Site::all()->filter(fn ($site) => $site->handle() !== $sourceSite
 TranslateGlobalSets::translateGlobalSets($globalSet, $sourceSite, $targetSites);
 ```
 
+### Translating Taxonomy Terms
+
+Terms are translated from the localization you pass in. To translate a term to a single site:
+
+```php
+use JustBetter\EntryTranslator\Facades\TranslateTerm;
+use Statamic\Facades\Site;
+use Statamic\Facades\Term;
+
+$term = Term::find('tags::hello')->in('en');
+$targetSite = Site::get('nl');
+
+TranslateTerm::translate($term, $targetSite);
+```
+
+To translate a term to multiple sites:
+
+```php
+use JustBetter\EntryTranslator\Facades\TranslateTerms;
+use Statamic\Facades\Site;
+use Statamic\Facades\Term;
+
+$term = Term::find('tags::hello')->in('en');
+$sites = Site::all()->filter(fn ($site) => $site->handle() !== $term->locale());
+
+TranslateTerms::translateTerms($term, $sites);
+```
+
 ### Using Jobs Directly
 
 You can dispatch translation jobs directly:
@@ -191,9 +228,11 @@ You can dispatch translation jobs directly:
 ```php
 use JustBetter\EntryTranslator\Jobs\TranslateEntryJob;
 use JustBetter\EntryTranslator\Jobs\TranslateGlobalSetJob;
+use JustBetter\EntryTranslator\Jobs\TranslateTermJob;
 use Statamic\Facades\Entry;
 use Statamic\Facades\GlobalSet;
 use Statamic\Facades\Site;
+use Statamic\Facades\Term;
 
 $entry = Entry::find('entry-id');
 $targetSite = Site::get('en');
@@ -205,6 +244,11 @@ $sourceSite = Site::get('en');
 $targetSite = Site::get('nl');
 
 TranslateGlobalSetJob::dispatch($globalSet, $sourceSite, $targetSite);
+
+$term = Term::find('tags::hello')->in('en');
+$targetSite = Site::get('nl');
+
+TranslateTermJob::dispatch($term, $targetSite);
 ```
 
 ## How It Works
@@ -228,6 +272,14 @@ TranslateGlobalSetJob::dispatch($globalSet, $sourceSite, $targetSite);
 5. The translated content is merged with the original source data
 6. The target site's global variables are saved quietly
 
+### Taxonomy Terms
+
+1. The package identifies all localizable fields in the term's blueprint
+2. Fields that are excluded (by handle or type) are filtered out
+3. The source term localization is translated by the configured translation service
+4. The translated content is merged with the original source data
+5. The term is saved quietly with the translated data for the target site
+
 The package handles:
 
 - Nested fields (fields within fields)
@@ -249,10 +301,11 @@ use Illuminate\Support\Collection;
 use Statamic\Entries\Entry;
 use Statamic\Globals\Variables;
 use Statamic\Sites\Site;
+use Statamic\Taxonomies\LocalizedTerm;
 
 class MyCustomTranslator extends BaseTranslator
 {
-    public function translate(Entry|Variables $source, Collection $localisableFields, Site $site): array
+    public function translate(Entry|Variables|LocalizedTerm $source, Collection $localisableFields, Site $site): array
     {
         // Your translation logic here
         // Return an array of translated data
