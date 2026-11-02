@@ -18,14 +18,14 @@ class TranslateTerm implements TranslatesTerm
 
     public function translate(LocalizedTerm $source, Site $site): void
     {
-        /** @var LocalizedTerm $term */
-        $term = $source->in($site->handle());
-
-        $localisableFields = $term->blueprint()->fields()->localizable()->items();
+        $localisableFields = $source->blueprint()->fields()->localizable()->items();
         /** @var Collection<int, non-falsy-string> $localisableFields */
         $localisableFields = $this->collectFields->collect($localisableFields);
 
         $data = $this->resolvesTranslator->resolve()->translate($source, $localisableFields, $site);
+
+        /** @var LocalizedTerm $term */
+        $term = $source->fresh()->in($site->handle());
 
         /** @var Collection<string, mixed> $original */
         $original = $source->data();
